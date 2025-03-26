@@ -9,6 +9,7 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateMixin {
+  List<Map<String, dynamic>> selectedQuestions = [];
   int currentQuestionIndex = 0;
   int correctCount = 0;
   int streakCount = 0;
@@ -24,6 +25,10 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
+    
+    // ランダムに10問を選択
+    selectedQuestions = List.from(questions)..shuffle();
+    selectedQuestions = selectedQuestions.take(10).toList();
   }
 
   @override
@@ -35,7 +40,7 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
   void checkAnswer(String answer) async {
     setState(() {
       selectedAnswer = answer;
-      if (answer == questions[currentQuestionIndex]["correct"]) {
+      if (answer == selectedQuestions[currentQuestionIndex]["correct"]) {
         correctCount++;
         streakCount++;
         resultIcon = "⭕";  // ◯を正解として設定
@@ -58,7 +63,7 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
 
   void nextQuestion() {
     setState(() {
-      if (currentQuestionIndex < questions.length - 1) {
+      if (currentQuestionIndex < selectedQuestions.length - 1) {
         currentQuestionIndex++;
         selectedAnswer = null;
       } else {
@@ -74,7 +79,7 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    var question = questions[currentQuestionIndex];
+    var question = selectedQuestions[currentQuestionIndex];
     List<String> shuffledOptions = List.from(question["options"]);
     shuffledOptions.shuffle();
 
@@ -87,7 +92,7 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("問題 ${currentQuestionIndex + 1} / ${questions.length}", style: TextStyle(fontSize: 18)),
+                Text("問題 ${currentQuestionIndex + 1} / 10", style: TextStyle(fontSize: 18)),
                 SizedBox(height: 20),
                 Text(question["question"], style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 SizedBox(height: 20),
@@ -122,12 +127,12 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
                         context,
                         MaterialPageRoute(
                           builder: (context) => ExplanationScreen(
-                            question: questions[currentQuestionIndex],
+                            question: selectedQuestions[currentQuestionIndex],
                             userAnswer: selectedAnswer,  // ユーザーの回答を渡す
                             resultIcon: resultIcon,
                             onNext: nextQuestion, // 次の問題に進むためのコールバック
                             correctCount: correctCount, // correctCount を渡す
-                            isLastQuestion: currentQuestionIndex == questions.length - 1, // 最後の問題かどうか
+                            isLastQuestion: currentQuestionIndex == selectedQuestions.length - 1, // 最後の問題かどうか
                           ),
                         ),
                       ).then((_) {
@@ -158,3 +163,4 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
     );
   }
 }
+

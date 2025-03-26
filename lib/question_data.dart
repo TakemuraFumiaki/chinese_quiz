@@ -69,4 +69,80 @@ final List<Map<String, dynamic>> questions = [
     "meaning": "お母さん",
     "example": "妈妈，我爱你！(お母さん、私はあなたを愛しています！)"
   },
+  {
+    "question": "中国 のピン音は？",
+    "correct": "zhōngguó",
+    "options": ["zhōngguó", "zhōngguóo", "zhōng gúo", "zhōng guó"],
+    "meaning": "中国",
+    "example": "我喜欢中国。(私は中国が好きです。)"
+  },
+  {
+    "question": "学习 のピン音は？",
+    "correct": "xuéxí",
+    "options": ["xuéxí", "xūxí", "xúxī", "xuěxī"],
+    "meaning": "勉強する",
+    "example": "我在学习中文。(私は中国語を勉強しています。)"
+  },
+  {
+    "question": "朋友 のピン音は？",
+    "correct": "péngyǒu",
+    "options": ["péngyǒu", "péngyōu", "péngyou", "péngyǒ"],
+    "meaning": "友達",
+    "example": "他是我的朋友。(彼は私の友達です。)"
+  },
+  {
+    "question": "天气 のピン音は？",
+    "correct": "tiānqì",
+    "options": ["tiānqì", "tiánqì", "tiānqǐ", "tiānqi"],
+    "meaning": "天気",
+    "example": "今天天气很好。(今日は天気がいいです。)"
+  },
+  {
+    "question": "学校 のピン音は？",
+    "correct": "xuéxiào",
+    "options": ["xuéxiào", "xuéxiāo", "xūexiào", "xuěxiào"],
+    "meaning": "学校",
+    "example": "我在学校学习。(私は学校で勉強します。)"
+  },
+  {
+    "question": "图书馆 のピン音は？",
+    "correct": "túshūguǎn",
+    "options": ["túshūguǎn", "tūshūguǎn", "túshūguān", "túshūquǎn"],
+    "meaning": "図書館",
+    "example": "图书馆里有很多书。(図書館には本がたくさんあります。)"
+  },
+  {
+    "question": "日本 のピン音は？",
+    "correct": "rìběn",
+    "options": ["rìběn", "ríběn", "rìbén", "rìběng"],
+    "meaning": "日本",
+    "example": "我喜欢日本文化。(私は日本文化が好きです。)"
+  },
+  {
+    "question": "电影 のピン音は？",
+    "correct": "diànyǐng",
+    "options": ["diànyǐng", "diānyǐng", "diànyìng", "diányǐng"],
+    "meaning": "映画",
+    "example": "这个电影很好看。(この映画はとても面白いです。)"
+  },
+  {
+    "question": "电脑 のピン音は？",
+    "correct": "diànnǎo",
+    "options": ["diànnǎo", "diànnào", "diànnǎ", "diánnǎo"],
+    "meaning": "コンピューター",
+    "example": "我用电脑工作。(私はコンピューターを使って仕事をします。)"
+  },
+  {
+    "question": "音乐 のピン音は？",
+    "correct": "yīnyuè",
+    "options": ["yīnyuè", "yīnyué", "yīngyuè", "yínyuè"],
+    "meaning": "音楽",
+    "example": "我喜欢听音乐。(私は音楽を聴くのが好きです。)"
+  },
 ];
+
+// 30問の中から10問をランダムに選択
+dynamic getRandomQuestions() {
+  List<Map<String, dynamic>> shuffled = List.from(questions)..shuffle();
+  return shuffled.sublist(0, 10);
+}
