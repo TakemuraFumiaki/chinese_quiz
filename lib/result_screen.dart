@@ -11,7 +11,7 @@ class ResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     int score = correctCount * 10; // 10点 × 正解数
 
-    // テスト結果を保存
+    // テスト結果を履歴に保存
     HistoryManager.saveResult(correctCount);
 
     return Scaffold(
@@ -22,7 +22,7 @@ class ResultScreen extends StatelessWidget {
           children: [
             Text("テスト終了！", style: TextStyle(fontSize: 24)),
             SizedBox(height: 20),
-            Text("正解数: $correctCount / 10", style: TextStyle(fontSize: 20)),
+            Text("正解数: $correctCount / 10", style: TextStyle(fontSize: 20)), // 正解数を10に修正
             Text("スコア: $score 点", style: TextStyle(fontSize: 20)),
             SizedBox(height: 20),
             ElevatedButton(

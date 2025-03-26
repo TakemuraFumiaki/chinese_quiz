@@ -16,6 +16,62 @@ final List<Map<String, dynamic>> questions = [
     "meaning": "ありがとう",
     "example": "谢谢你！（ありがとう！）"
   },
+  {
+    "question": "早上好 のピン音は？",
+    "correct": "zǎo shàng hǎo",
+    "options": ["zǎo shàng hǎo", "zào shàng hǎo", "zǎo xià hǎo", "zào xià hǎo"],
+    "meaning": "おはよう",
+    "example": "早上好！你今天怎么样？(おはよう！今日はどうですか？)"
+  },
+  {
+    "question": "再见 のピン音は？",
+    "correct": "zàijiàn",
+    "options": ["zàijiàn", "zài jiàn", "zài jiān", "zàī jiàn"],
+    "meaning": "さようなら",
+    "example": "再见！下次见！(さようなら！また会いましょう！)"
+  },
+  {
+    "question": "请问 のピン音は？",
+    "correct": "qǐng wèn",
+    "options": ["qǐng wèn", "qīn wèn", "qǐng wēn", "qīng wèn"],
+    "meaning": "すみません、質問があります",
+    "example": "请问，最近如何？(すみません、最近どうですか？)"
+  },
+  {
+    "question": "对不起 のピン音は？",
+    "correct": "duìbuqǐ",
+    "options": ["duìbuqǐ", "duī bù qǐ", "duì bù qí", "duì bù qī"],
+    "meaning": "ごめんなさい",
+    "example": "对不起，我迟到了。(ごめんなさい、遅れました。)"
+  },
+  {
+    "question": "我很好 のピン音は？",
+    "correct": "wǒ hěn hǎo",
+    "options": ["wǒ hěn hǎo", "wǒ hèn hǎo", "wǒ hěn hāo", "wǒ hěn hāo"],
+    "meaning": "私は元気です",
+    "example": "我很好，谢谢！(私は元気です、ありがとう！)"
+  },
+  {
+    "question": "你吃了吗？ のピン音は？",
+    "correct": "nǐ chī le ma",
+    "options": ["nǐ chī le ma", "nī chī le ma", "nǐ chī mǎ", "nǐ chí le ma"],
+    "meaning": "ご飯を食べましたか？",
+    "example": "你吃了吗？我刚刚吃完。(ご飯を食べましたか？私は今食べ終わりました。)"
+  },
+  {
+    "question": "我爱你 のピン音は？",
+    "correct": "wǒ ài nǐ",
+    "options": ["wǒ ài nǐ", "wǒ āi nǐ", "wǒ ài nī", "wǒ ài nī"],
+    "meaning": "愛してる",
+    "example": "我爱你，一生一世。(私はあなたを愛しています、一生涯。)"
+  },
+  {
+    "question": "妈妈 のピン音は？",
+    "correct": "māmā",
+    "options": ["māmā", "màma", "māma", "mámā"],
+    "meaning": "お母さん",
+    "example": "妈妈，我爱你！(お母さん、私はあなたを愛しています！)"
+  },
 ];
 
 class QuizScreen extends StatefulWidget {
@@ -48,41 +104,44 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
   }
 
   void checkAnswer(String answer) async {
-    setState(() {
-      selectedAnswer = answer;
-      if (answer == questions[currentQuestionIndex]["correct"]) {
-        correctCount++;
-        streakCount++;
-        resultIcon = "⭕";  // ◯を正解として設定
-        showEffect = true;
-        _controller.forward(from: 0.0);
-      } else {
-        streakCount = 0;
-        resultIcon = "❌";  // ❌を不正解として設定
-        showEffect = true;
-        _controller.forward(from: 0.0);
-      }
-    });
+  setState(() {
+    selectedAnswer = answer;
+    if (answer == questions[currentQuestionIndex]["correct"]) {
+      correctCount++;
+      streakCount++;
+      resultIcon = "⭕";  // ◯を正解として設定
+      showEffect = true;
+      _controller.forward(from: 0.0);
+    } else {
+      streakCount = 0;
+      resultIcon = "❌";  // ❌を不正解として設定
+      showEffect = true;
+      _controller.forward(from: 0.0);
+    }
+  });
 
-    // 1秒後にエフェクトを消す
-    await Future.delayed(Duration(seconds: 1));
-    setState(() {
-      showEffect = false;
-    });
+  // 1秒後にエフェクトを消す
+  await Future.delayed(Duration(seconds: 1));
+  setState(() {
+    showEffect = false;
+  });
 
-    // 解説画面に遷移
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ExplanationScreen(
-          question: questions[currentQuestionIndex],
-          userAnswer: selectedAnswer,  // ユーザーの回答を渡す
-          resultIcon: resultIcon,
-          onNext: nextQuestion, // 次の問題に進むためのコールバック
-        ),
+  // 解説画面に遷移
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ExplanationScreen(
+        question: questions[currentQuestionIndex],
+        userAnswer: selectedAnswer,  // ユーザーの回答を渡す
+        resultIcon: resultIcon,
+        onNext: nextQuestion, // 次の問題に進むためのコールバック
+        correctCount: correctCount, // correctCount を渡す
+        isLastQuestion: currentQuestionIndex == questions.length - 1, // 最後の問題かどうか
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   void nextQuestion() {
     setState(() {
@@ -137,24 +196,6 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
                     );
                   }).toList(),
                 ),
-                SizedBox(height: 20),
-                // 次へボタンは削除
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ExplanationScreen(
-                          question: questions[currentQuestionIndex],
-                          resultIcon: resultIcon,
-                          userAnswer: selectedAnswer, // ユーザーの回答を渡す
-                          onNext: nextQuestion, // 次の問題に進むためのコールバック
-                        ),
-                      ),
-                    );
-                  },
-                  child: Text("解説"),
-                ),
               ],
             ),
           ),
@@ -175,14 +216,22 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
   }
 }
 
-// 解説画面
 class ExplanationScreen extends StatelessWidget {
   final Map<String, dynamic> question;
   final String? resultIcon;
   final String? userAnswer;  // ユーザーの回答
   final VoidCallback onNext; // 次の問題に進むためのコールバック
+  final int correctCount; // correctCount を追加
+  final bool isLastQuestion; // 最後の問題かどうかを判定するフラグ
 
-  ExplanationScreen({required this.question, required this.resultIcon, required this.userAnswer, required this.onNext});
+  ExplanationScreen({
+    required this.question,
+    required this.resultIcon,
+    required this.userAnswer,
+    required this.onNext,
+    required this.correctCount, // 必須の引数として追加
+    required this.isLastQuestion, // 最後の問題かどうか
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +241,7 @@ class ExplanationScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,  // 左寄せに変更
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('質問: ${question["question"]}', style: TextStyle(fontSize: 20)),
               SizedBox(height: 20),
@@ -218,6 +267,20 @@ class ExplanationScreen extends StatelessWidget {
                 },
                 child: Text('次の問題'),
               ),
+              // 最後の問題の場合
+              if (isLastQuestion)
+                ElevatedButton(
+                  onPressed: () {
+                    // 結果を確認するボタンでResultScreenに遷移
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResultScreen(correctCount: correctCount),
+                      ),
+                    );
+                  },
+                  child: Text('結果を確認する'),
+                ),
             ],
           ),
         ),
@@ -225,3 +288,5 @@ class ExplanationScreen extends StatelessWidget {
     );
   }
 }
+
+
