@@ -104,44 +104,28 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
   }
 
   void checkAnswer(String answer) async {
-  setState(() {
-    selectedAnswer = answer;
-    if (answer == questions[currentQuestionIndex]["correct"]) {
-      correctCount++;
-      streakCount++;
-      resultIcon = "⭕";  // ◯を正解として設定
-      showEffect = true;
-      _controller.forward(from: 0.0);
-    } else {
-      streakCount = 0;
-      resultIcon = "❌";  // ❌を不正解として設定
-      showEffect = true;
-      _controller.forward(from: 0.0);
-    }
-  });
+    setState(() {
+      selectedAnswer = answer;
+      if (answer == questions[currentQuestionIndex]["correct"]) {
+        correctCount++;
+        streakCount++;
+        resultIcon = "⭕";  // ◯を正解として設定
+        showEffect = true;
+        _controller.forward(from: 0.0);
+      } else {
+        streakCount = 0;
+        resultIcon = "❌";  // ❌を不正解として設定
+        showEffect = true;
+        _controller.forward(from: 0.0);
+      }
+    });
 
-  // 1秒後にエフェクトを消す
-  await Future.delayed(Duration(seconds: 1));
-  setState(() {
-    showEffect = false;
-  });
-
-  // 解説画面に遷移
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => ExplanationScreen(
-        question: questions[currentQuestionIndex],
-        userAnswer: selectedAnswer,  // ユーザーの回答を渡す
-        resultIcon: resultIcon,
-        onNext: nextQuestion, // 次の問題に進むためのコールバック
-        correctCount: correctCount, // correctCount を渡す
-        isLastQuestion: currentQuestionIndex == questions.length - 1, // 最後の問題かどうか
-      ),
-    ),
-  );
-}
-
+    // 1秒後にエフェクトを消す
+    await Future.delayed(Duration(seconds: 1));
+    setState(() {
+      showEffect = false;
+    });
+  }
 
   void nextQuestion() {
     setState(() {
@@ -196,6 +180,36 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
                     );
                   }).toList(),
                 ),
+                SizedBox(height: 20),
+                if (selectedAnswer != null) 
+                  ElevatedButton(
+                    onPressed: selectedAnswer != null ? () {
+                      // 解説を見るボタンが押されたときにアニメーションを消す
+                      setState(() {
+                        showEffect = false;  // アニメーションを非表示に設定
+                      });
+                      // 解説画面に遷移
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExplanationScreen(
+                            question: questions[currentQuestionIndex],
+                            userAnswer: selectedAnswer,  // ユーザーの回答を渡す
+                            resultIcon: resultIcon,
+                            onNext: nextQuestion, // 次の問題に進むためのコールバック
+                            correctCount: correctCount, // correctCount を渡す
+                            isLastQuestion: currentQuestionIndex == questions.length - 1, // 最後の問題かどうか
+                          ),
+                        ),
+                      ).then((_) {
+                        // 解説画面から戻った後にアニメーションを消す
+                        setState(() {
+                          showEffect = false;
+                        });
+                      });
+                    } : null,
+                    child: Text("解説を見る"),
+                  ),
               ],
             ),
           ),
@@ -215,6 +229,8 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
     );
   }
 }
+
+
 
 class ExplanationScreen extends StatelessWidget {
   final Map<String, dynamic> question;
